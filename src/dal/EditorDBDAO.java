@@ -196,7 +196,7 @@ public class EditorDBDAO implements IEditorDBDAO {
 
 					pklStmt.setInt(1, pageId);
 					pklStmt.setString(2, word);
-					pklStmt.setDouble(3, pkl);
+					pklStmt.setDouble(3, fixZero(pkl));
 					pklStmt.addBatch();
 				}
 				pklStmt.executeBatch();
@@ -210,7 +210,7 @@ public class EditorDBDAO implements IEditorDBDAO {
 
 					pmiStmt.setInt(1, pageId);
 					pmiStmt.setString(2, word);
-					pmiStmt.setDouble(3, pmi);
+					pmiStmt.setDouble(3, fixZero(pmi));
 					pmiStmt.addBatch();
 				}
 				pmiStmt.executeBatch();
@@ -219,7 +219,7 @@ public class EditorDBDAO implements IEditorDBDAO {
 
 //			tfidfStmt = conn.prepareStatement(tfidfQuery);
 			tfidfStmt.setInt(1, fileID);
-			tfidfStmt.setDouble(2, tfidf);
+			tfidfStmt.setDouble(2, fixZero(fileID));
 			tfidfStmt.executeUpdate();
 
 			conn.commit();
@@ -391,7 +391,7 @@ public class EditorDBDAO implements IEditorDBDAO {
 			for (Map.Entry<String, Double> entry : pklMap.entrySet()) {
 				pklStmt.setInt(1, pageId);
 				pklStmt.setString(2, entry.getKey());
-				pklStmt.setDouble(3, entry.getValue());
+				pklStmt.setDouble(3, fixZero(entry.getValue()));
 				pklStmt.addBatch();
 			}
 			pklStmt.executeBatch();
@@ -408,7 +408,7 @@ public class EditorDBDAO implements IEditorDBDAO {
 			for (Map.Entry<String, Double> entry : pmiMap.entrySet()) {
 				pmiStmt.setInt(1, pageId);
 				pmiStmt.setString(2, entry.getKey());
-				pmiStmt.setDouble(3, entry.getValue());
+				pmiStmt.setDouble(3, fixZero(entry.getValue()));
 				pmiStmt.addBatch();
 			}
 			pmiStmt.executeBatch();
@@ -417,7 +417,7 @@ public class EditorDBDAO implements IEditorDBDAO {
 			double tfidf = performTFIDF(getAllExistingFilesContent(conn), content);
 			String tfidfQuery = "UPDATE tfidf SET tfidfScore = ? WHERE fileId = ?";
 			tfidfStmt = conn.prepareStatement(tfidfQuery);
-			tfidfStmt.setDouble(1, tfidf);
+			tfidfStmt.setDouble(1, fixZero(tfidf));
 			tfidfStmt.setInt(2, fileId);
 			tfidfStmt.executeUpdate();
 
@@ -633,6 +633,13 @@ public class EditorDBDAO implements IEditorDBDAO {
 	public synchronized Map<String, String> segmentWords(String text) {
 		// TODO Auto-generated method stub
 		return WordSegmentation.extractSegments(PreProcessText.preprocessText(text));
+	}
+
+	public double fixZero(double value) {
+		if(Double.isNaN(value) || Double.isInfinite(value)) {
+			return 0.0;
+		}
+		return value;
 	}
 
 }
