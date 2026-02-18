@@ -1,4 +1,4 @@
-package business;
+package Buisness;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +13,7 @@ import bll.EditorBO;
 import dal.IFacadeDAO;
 import dto.Documents;
 
-public class EditorBOImportTest {
+public class EditorBOimportTest {
 
     // ---------- Fake DAO for isolated business-layer testing ----------
     private IFacadeDAO fakeDb = new IFacadeDAO() {
